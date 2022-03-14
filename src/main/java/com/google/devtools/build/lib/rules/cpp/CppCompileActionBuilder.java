@@ -333,7 +333,7 @@ public class CppCompileActionBuilder {
     if (grepIncludes != null) {
       realMandatoryInputsBuilder.add(grepIncludes);
     }
-    if (!shouldScanIncludes && dotdFile == null) {
+    if (!shouldScanIncludes && dotdFile == null && !featureConfiguration.isEnabled(CppRuleClasses.PARSE_SHOWINCLUDES)) {
       realMandatoryInputsBuilder.addTransitive(ccCompilationContext.getDeclaredIncludeSrcs());
       realMandatoryInputsBuilder.addTransitive(additionalPrunableHeaders);
     }
