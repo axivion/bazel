@@ -268,7 +268,7 @@ class NativeProcess {
           /* dwDesiredAccess */ GENERIC_WRITE,
           // Must share for reading, otherwise symlink-following file existence
           // checks (e.g. java.nio.file.Files.exists()) fail.
-          /* dwShareMode */ FILE_SHARE_READ,
+          /* dwShareMode */ FILE_SHARE_READ | FILE_SHARE_WRITE,
           /* lpSecurityAttributes */ &sa,
           /* dwCreationDisposition */ OPEN_ALWAYS,
           /* dwFlagsAndAttributes */ FILE_ATTRIBUTE_NORMAL,
