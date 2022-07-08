@@ -13,7 +13,7 @@
 // limitations under the License.
 package com.google.devtools.build.lib.analysis;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.devtools.build.lib.actions.ActionExecutionContext;
@@ -165,7 +165,7 @@ public final class SourceManifestAction extends AbstractFileWriteAction {
    * @throws IOException
    */
   private void writeFile(OutputStream out, Map<PathFragment, Artifact> output) throws IOException {
-    Writer manifestFile = new BufferedWriter(new OutputStreamWriter(out, ISO_8859_1));
+    Writer manifestFile = new BufferedWriter(new OutputStreamWriter(out, UTF_8));
     List<Map.Entry<PathFragment, Artifact>> sortedManifest = new ArrayList<>(output.entrySet());
     Collections.sort(sortedManifest, ENTRY_COMPARATOR);
 
