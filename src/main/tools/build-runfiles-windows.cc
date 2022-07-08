@@ -125,8 +125,8 @@ bool ReadSymlink(const wstring& abs_path, wstring* target, wstring* error) {
 }
 
 // Replaces \s, \n, and \b with their respective characters.
-std::string Unescape(const std::string& path) {
-  std::string result;
+std::wstring Unescape(const std::wstring& path) {
+  std::wstring result;
   result.reserve(path.size());
   for (size_t i = 0; i < path.size(); ++i) {
     if (path[i] == '\\' && i + 1 < path.size()) {
@@ -194,23 +194,22 @@ class RunfilesCreator {
 
       wstring link;
       wstring target;
-      if (!line.empty() && line[0] == ' ') {
+      wstring wline = blaze_util::CstringToWstring(line);
+      if (!wline.empty() && wline[0] == ' ') {
         // The link path contains escape sequences for spaces and backslashes.
-        string::size_type idx = line.find(' ', 1);
+        string::size_type idx = wline.find(' ', 1);
         if (idx == string::npos) {
-          die(L"Missing separator in manifest line: %hs", line.c_str());
+          die(L"Missing separator in manifest line: %hs", wline.c_str());
         }
-        std::string link_path = Unescape(line.substr(1, idx - 1));
-        link = blaze_util::CstringToWstring(link_path);
-        std::string target_path = Unescape(line.substr(idx + 1));
-        target = blaze_util::CstringToWstring(target_path);
+        link = Unescape(wline.substr(1, idx - 1));
+        target = Unescape(wline.substr(idx + 1));
       } else {
-        string::size_type idx = line.find(' ');
+        string::size_type idx = wline.find(' ');
         if (idx == string::npos) {
-          die(L"Missing separator in manifest line: %hs", line.c_str());
+          die(L"Missing separator in manifest line: %hs", wline.c_str());
         }
-        link = blaze_util::CstringToWstring(line.substr(0, idx));
-        target = blaze_util::CstringToWstring(line.substr(idx + 1));
+        link = wline.substr(0, idx);
+        target = wline.substr(idx + 1);
       }
 
       // We sometimes need to create empty files under the runfiles tree.
