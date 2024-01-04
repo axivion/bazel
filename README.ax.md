@@ -1,27 +1,26 @@
 ## Axivion modifications to Bazel
 
 This is a patched version containing fixes for:
-- <https://github.com/bazelbuild/bazel/issues/14947>
 - <https://github.com/bazelbuild/bazel/issues/11220>
 - <https://github.com/bazelbuild/bazel/pull/15846>
 - <https://github.com/bazelbuild/bazel/issues/14848>
 
-Patched Source: <https://github.com/axivion/bazel/tree/axivion-6.0.0>
+Patched Source: <https://github.com/axivion/bazel/tree/axivion-7.0.0>
 
-- Windows Command: `bazel build //src:bazel.exe --compilation_mode=opt --stamp src:bazel --embed_label 6.0.0-ax`
-- Unix Command: `bazel build //src:bazel --compilation_mode=opt --stamp src:bazel --embed_label 6.0.0-ax`
+- Windows Command: `bazel build //src:bazel.exe --compilation_mode=opt --stamp src:bazel --embed_label 7.0.0-ax`
+- Unix Command: `bazel build //src:bazel --compilation_mode=opt --stamp src:bazel --embed_label 7.0.0-ax`
 
 **Note:** The Linux build should happen in a Docker image that is compatible with our Jenkins environment.
 
 ## Update bazel
 - Clone this repo.
-- Update the master from upstream.
-- Create a new branch from an upstream release tag (e.g., from 6.0.0).
+- Update the master from upstream using `git pull https://github.com/bazelbuild/bazel`.
+- Create a new branch from an upstream release tag (e.g., from 7.0.0).
 - Add the various patches we accumulated via `git cherry-pick`. You can find the hashes using
-`git lg 6.0.0..origin/axivion-6.0.0`.
+`git log 7.0.0..origin/axivion-7.0.0`.
 - Build bazel using bazel (if your environment does not have bazel, you can use [bazelisk](https://github.com/bazelbuild/bazelisk)) for all platforms (i.e., Windows, Linux, MacOs).
 - Upload the created bazel binary (can usually be found in `bazel-bin/src/bazel`) to our artifactory registry to the platform-specific paths, e.g., `generic-local/Windows-AMD64/bazel`.
-- Update `BAZEL_VERSION` in `axivion/dependencies/Makefile`.
+- Update the bazel version in `axivion/dependencies/ax_deps/recipes/bazel/__init__.py`.
 - Update compiler toolchains (or: check if its necessary)
   - Find these lines in bazel.rc and comment them out:
 
