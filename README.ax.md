@@ -12,6 +12,10 @@ Patched Source: <https://github.com/axivion/bazel/tree/axivion-7.0.0>
 
 **Note:** The Linux build should happen in a Docker image that is compatible with our Jenkins environment.
 
+- A preconfigured Dockerfile is located at: `axivion/dependencies/ax_deps/recipes/bazel/bazel.docker`
+- CD into the directory and build with `docker build -f bazel.docker . --ulimit nofile=262144:262144` // We need to increase the number of allowed open files.
+- Run the container with `docker run --mount type=bind,source=<path/to/shared/dir>,target=/mount -it <container-id>` and upload the bazel binary `bazel-bin/src/bazel` to artifactory 
+
 ## Update bazel
 - Clone this repo.
 - Update the master from upstream using `git pull https://github.com/bazelbuild/bazel`.
