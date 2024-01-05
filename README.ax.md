@@ -23,6 +23,9 @@ Patched Source: <https://github.com/axivion/bazel/tree/axivion-7.0.0>
 - Add the various patches we accumulated via `git cherry-pick`. You can find the hashes using
 `git log 7.0.0..origin/axivion-7.0.0`.
 - Build bazel using bazel (if your environment does not have bazel, you can use [bazelisk](https://github.com/bazelbuild/bazelisk)) for all platforms (i.e., Windows, Linux, MacOs).
+  - See `https://bazel.build/install/compile-source` for instructions and prerequisites
+  - For example on Windows `https://www.msys2.org/`` is required to be installed at `c:\tools\msys2`
+    - Also run `pacman -S zip unzip patch` in a msys2 bash shell before the bazel build
 - Upload the created bazel binary (can usually be found in `bazel-bin/src/bazel`) to our artifactory registry to the platform-specific paths, e.g., `generic-local/Windows-AMD64/bazel`.
 - Update the bazel version in `axivion/dependencies/ax_deps/recipes/bazel/__init__.py`.
 - Update compiler toolchains (or: check if its necessary)
