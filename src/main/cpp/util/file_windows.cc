@@ -163,36 +163,30 @@ bool IsUntampered(const Path& path) {
     return false;
   }
 
-  bool is_directory = attrs & FILE_ATTRIBUTE_DIRECTORY;
-  AutoHandle handle(CreateFileW(
-      /* lpFileName */ path.AsNativePath().c_str(),
-      /* dwDesiredAccess */ GENERIC_READ,
-      /* dwShareMode */ FILE_SHARE_READ,
-      /* lpSecurityAttributes */ nullptr,
-      /* dwCreationDisposition */ OPEN_EXISTING,
-      /* dwFlagsAndAttributes */
-      // Per CreateFile's documentation on MSDN, opening directories requires
-      // the FILE_FLAG_BACKUP_SEMANTICS flag.
-      is_directory ? FILE_FLAG_BACKUP_SEMANTICS : FILE_ATTRIBUTE_NORMAL,
-      /* hTemplateFile */ nullptr));
+  // AXIVION patch: skip date comparison (time bomb); merely check that file exists (via GetFileAttributesW exit code)
+  return true;
 
-  if (!handle.IsValid()) {
-    return false;
-  }
+  // bool is_directory = attrs & FILE_ATTRIBUTE_DIRECTORY;
+  // AutoHandle handle(CreateFileW(
+  //     /* lpFileName */ path.AsNativePath().c_str(),
+  //     /* dwDesiredAccess */ GENERIC_READ,
+  //     /* dwShareMode */ FILE_SHARE_READ,
+  //     /* lpSecurityAttributes */ nullptr,
+  //     /* dwCreationDisposition */ OPEN_EXISTING,
+  //     /* dwFlagsAndAttributes */
+  //     // Per CreateFile's documentation on MSDN, opening directories requires
+  //     // the FILE_FLAG_BACKUP_SEMANTICS flag.
+  //     is_directory ? FILE_FLAG_BACKUP_SEMANTICS : FILE_ATTRIBUTE_NORMAL,
+  //     /* hTemplateFile */ nullptr));
 
-  if (is_directory) {
-    return true;
-  } else {
-    BY_HANDLE_FILE_INFORMATION info;
-    if (!GetFileInformationByHandle(handle, &info)) {
-      return false;
-    }
+  // if (!handle.IsValid()) {
+  //   return false;
+  // }
 
     // Compare with kNearFuture, not with kDistantFuture.
     // This way we don't need to worry about a potentially unreliable equality
     // check if precision isn't preserved.
-    return CompareFileTime(&kNearFuture, &info.ftLastWriteTime) == -1;
-  }
+    // return CompareFileTime(&kNearFuture, &info.ftLastWriteTime) == -1;
 }
 
 bool SetMtimeToNow(const Path& path) { return SetMtime(path, GetNow()); }

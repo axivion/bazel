@@ -474,11 +474,13 @@ bool IsUntampered(const Path &path) {
   if (stat(path.AsNativePath().c_str(), &buf)) {
     return false;
   }
-
   // Compare with kNearFuture, not kDistantFuture.
   // This way we don't need to worry about a potentially unreliable equality
   // check if precision isn't preserved.
-  return S_ISDIR(buf.st_mode) || (buf.st_mtime > kNearFuture);
+
+  // AXIVION patch: skip date comparison (time bomb); merely check that file exists (via stat exit code)
+  return true;
+  //return S_ISDIR(buf.st_mode) || (buf.st_mtime > kNearFuture);
 }
 
 bool SetMtimeToNow(const Path &path) {
