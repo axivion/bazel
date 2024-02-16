@@ -478,7 +478,10 @@ bool PosixFileMtime::IsUntampered(const Path &path) {
   // This way we don't need to call GetNow() every time we want to compare and
   // we also don't need to worry about potentially unreliable time equality
   // check (in case it uses floats or something crazy).
-  return S_ISDIR(buf.st_mode) || (buf.st_mtime > near_future_);
+
+  // AXIVION patch: skip date comparison (time bomb); merely check that file exists (via stat exit code)
+  return true;
+  //return S_ISDIR(buf.st_mode) || (buf.st_mtime > near_future_);
 }
 
 bool PosixFileMtime::SetToNow(const Path &path) {
