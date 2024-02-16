@@ -140,39 +140,42 @@ bool WindowsFileMtime::IsUntampered(const Path& path) {
     return false;
   }
 
-  bool is_directory = attrs & FILE_ATTRIBUTE_DIRECTORY;
-  AutoHandle handle(CreateFileW(
-      /* lpFileName */ path.AsNativePath().c_str(),
-      /* dwDesiredAccess */ GENERIC_READ,
-      /* dwShareMode */ FILE_SHARE_READ,
-      /* lpSecurityAttributes */ nullptr,
-      /* dwCreationDisposition */ OPEN_EXISTING,
-      /* dwFlagsAndAttributes */
-      // Per CreateFile's documentation on MSDN, opening directories requires
-      // the FILE_FLAG_BACKUP_SEMANTICS flag.
-      is_directory ? FILE_FLAG_BACKUP_SEMANTICS : FILE_ATTRIBUTE_NORMAL,
-      /* hTemplateFile */ nullptr));
+  // AXIVION patch: skip date comparison (time bomb); merely check that file exists (via GetFileAttributesW exit code)
+  return true;
 
-  if (!handle.IsValid()) {
-    return false;
-  }
+  // bool is_directory = attrs & FILE_ATTRIBUTE_DIRECTORY;
+  // AutoHandle handle(CreateFileW(
+  //     /* lpFileName */ path.AsNativePath().c_str(),
+  //     /* dwDesiredAccess */ GENERIC_READ,
+  //     /* dwShareMode */ FILE_SHARE_READ,
+  //     /* lpSecurityAttributes */ nullptr,
+  //     /* dwCreationDisposition */ OPEN_EXISTING,
+  //     /* dwFlagsAndAttributes */
+  //     // Per CreateFile's documentation on MSDN, opening directories requires
+  //     // the FILE_FLAG_BACKUP_SEMANTICS flag.
+  //     is_directory ? FILE_FLAG_BACKUP_SEMANTICS : FILE_ATTRIBUTE_NORMAL,
+  //     /* hTemplateFile */ nullptr));
 
-  if (is_directory) {
-    return true;
-  } else {
-    BY_HANDLE_FILE_INFORMATION info;
-    if (!GetFileInformationByHandle(handle, &info)) {
-      return false;
-    }
+  // if (!handle.IsValid()) {
+  //   return false;
+  // }
 
-    // Compare the mtime with `near_future_`, not with `GetNow()` or
-    // `distant_future_`.
-    // This way we don't need to call GetNow() every time we want to compare
-    // (and thus convert a SYSTEMTIME to FILETIME), and we also don't need to
-    // worry about potentially unreliable FILETIME equality check (in case it
-    // uses floats or something crazy).
-    return CompareFileTime(&near_future_, &info.ftLastWriteTime) == -1;
-  }
+  // if (is_directory) {
+  //   return true;
+  // } else {
+  //   BY_HANDLE_FILE_INFORMATION info;
+  //   if (!GetFileInformationByHandle(handle, &info)) {
+  //     return false;
+  //   }
+
+  //   // Compare the mtime with `near_future_`, not with `GetNow()` or
+  //   // `distant_future_`.
+  //   // This way we don't need to call GetNow() every time we want to compare
+  //   // (and thus convert a SYSTEMTIME to FILETIME), and we also don't need to
+  //   // worry about potentially unreliable FILETIME equality check (in case it
+  //   // uses floats or something crazy).
+  //   return CompareFileTime(&near_future_, &info.ftLastWriteTime) == -1;
+  // }
 }
 
 bool WindowsFileMtime::SetToNow(const Path& path) {
